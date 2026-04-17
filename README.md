@@ -72,7 +72,7 @@ Após a entrega do PR, você será convidado para uma sessão de **System Design
 
 As 5 perguntas-base estão documentadas dentro de cada `CHALLENGE.md`. O objetivo não é reprovar — é entender como você pensa.
 
-> Candidatos que usaram IA para gerar o código e conseguem explicar cada decisão de arquitetura têm a **mesma avaliação** que quem escreveu tudo do zero. O que reprovará é não saber o que o código faz.
+> Candidatos que não usarem IA para gerar o código serão classificados como top tier e os que utilizarem IA precisarão explicar cada decisão de arquitetura e não será a **mesma avaliação** que quem escreveu tudo do zero. O que reprovará é não saber o que o código faz.
 
 ---
 
