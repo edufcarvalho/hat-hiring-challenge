@@ -9,5 +9,6 @@ services:
       - .:/app
     environment:
       - DATABASE_URL=sqlite:///./data/challenge.db
+      - ECHO_ENABLED=true
       - MARGEM_MINIMA_PCT=40.0
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
