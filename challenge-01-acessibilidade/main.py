@@ -4,11 +4,12 @@ Ponto de entrada da aplicação FastAPI.
 """
 
 from fastapi import FastAPI
-from src.api.routes import gastos, orgaos
-from src.infra.database import create_db_and_tables, engine
-from src.domain.models import Orgao
-from src.infra.seed import seed_database
 from sqlmodel import Session, select
+
+from src.api.routes import gastos, orgaos
+from src.domain.models import Orgao
+from src.infra.database import create_db_and_tables, engine
+from src.infra.seed import seed_database
 
 
 def lifespan(app: FastAPI):

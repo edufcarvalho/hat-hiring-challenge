@@ -1,4 +1,5 @@
 """Rotas para cálculo de rotas sustentáveis — implemente aqui."""
+
 from fastapi import APIRouter
 
 router = APIRouter()

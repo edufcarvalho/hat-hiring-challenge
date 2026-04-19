@@ -2,7 +2,9 @@
 HAT Thinking — Challenge 03: Motor de Precificação de Propostas
 Ponto de entrada da aplicação FastAPI.
 """
+
 from fastapi import FastAPI
+
 from src.api.routes import propostas
 from src.infra.database import create_db_and_tables
 

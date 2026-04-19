@@ -1,10 +1,12 @@
 from datetime import date
+from decimal import Decimal
 from typing import Optional
 from uuid import UUID
-from src.domain.enums import TipoPessoa
+
+from sqlmodel import Field, Relationship, SQLModel
 from uuid6 import uuid8
-from decimal import Decimal
-from sqlmodel import Field, SQLModel, Relationship
+
+from src.domain.enums import TipoPessoa
 
 
 class Gasto(SQLModel, table=True):

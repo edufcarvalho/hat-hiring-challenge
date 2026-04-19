@@ -1,4 +1,5 @@
 """Rotas para propostas comerciais — implemente aqui."""
+
 from fastapi import APIRouter
 
 router = APIRouter()

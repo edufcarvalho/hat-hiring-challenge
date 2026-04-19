@@ -2,7 +2,9 @@
 HAT Thinking — Challenge 02: Motor de Rotas Sustentáveis
 Ponto de entrada da aplicação FastAPI.
 """
+
 from fastapi import FastAPI
+
 from src.api.routes import rotas
 
 app = FastAPI(

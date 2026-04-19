@@ -1,12 +1,12 @@
-from datetime import timedelta, date
 import random
+from datetime import date, timedelta
 from typing import List
 
-from src.domain.enums import TipoPessoa
-from src.infra.database import engine, create_db_and_tables
-from src.domain.models import Favorecido, Orgao, Categoria, Gasto
-
 from sqlmodel import Session
+
+from src.domain.enums import TipoPessoa
+from src.domain.models import Categoria, Favorecido, Gasto, Orgao
+from src.infra.database import create_db_and_tables, engine
 
 # dados para o seed
 orgaos = [
