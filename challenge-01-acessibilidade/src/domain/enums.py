@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class TipoPessoa(Enum):
-  FISICA = "Pessoa Física"
-  JURIDICA = "Pessoa Jurídica"
+    FISICA = "Pessoa Física"
+    JURIDICA = "Pessoa Jurídica"

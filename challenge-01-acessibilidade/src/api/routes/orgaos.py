@@ -1,4 +1,5 @@
 """Rotas para órgãos — implemente aqui."""
+
 from fastapi import APIRouter
 
 router = APIRouter()

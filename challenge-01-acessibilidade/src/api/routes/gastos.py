@@ -1,4 +1,5 @@
 """Rotas para gastos públicos — implemente aqui."""
+
 from fastapi import APIRouter
 
 router = APIRouter()
