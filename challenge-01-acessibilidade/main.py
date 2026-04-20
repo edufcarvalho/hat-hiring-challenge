@@ -4,18 +4,17 @@ Ponto de entrada da aplicação FastAPI.
 """
 
 from fastapi import FastAPI
-from sqlmodel import Session, select
+from sqlmodel import select
 
 from src.api.routes import gastos, orgaos
 from src.domain.models import Orgao
-from src.infra.database import create_db_and_tables, engine
+from src.infra.database import create_db_and_tables, get_session
 from src.infra.seed import seed_database
 
 
 def lifespan(app: FastAPI):
     create_db_and_tables()
-    with Session(engine) as session:
-        # check if database is empty, if so, seed with initial data
+    with next(get_session()) as session:
         query = select(Orgao).limit(1)
         result = session.exec(query).first()
         if not result:
@@ -29,11 +28,6 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
-
-
-@app.on_event("startup")
-async def startup_event():
-    create_db_and_tables()
 
 
 app.include_router(gastos.router, prefix="/gastos", tags=["Gastos"])
