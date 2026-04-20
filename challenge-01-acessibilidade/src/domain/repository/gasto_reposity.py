@@ -30,8 +30,8 @@ class GastoRepository:
     @cached(cache=_cache, key=_make_key, info=True)
     def get_summary(
         self,
-        start_date: Optional(datetime) = datetime.min,
-        end_date: Optional(datetime) = datetime.max,
+        start_date: Optional[datetime] = datetime.min,
+        end_date: Optional[datetime] = datetime.max,
     ) -> list[GastoResumo]:
         query = (
             select(
