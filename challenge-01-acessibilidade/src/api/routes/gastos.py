@@ -18,7 +18,6 @@ router = APIRouter()
 
 @router.get("")
 def listar_gastos(
-    response: Response,
     page: int = 0,
     page_size: int = 100,
     session=Depends(get_session),
