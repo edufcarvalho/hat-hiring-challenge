@@ -13,14 +13,14 @@ logger = logging.getLogger("uvicorn.error")
 
 
 class GastoRepository:
-    _cache = TTLCache(maxsize=1, ttl=60)
+    _cache = TTLCache(maxsize=100, ttl=60)
 
     def __init__(self, session: Session):
         self.session = session
 
     @staticmethod
-    def _make_key(_):
-        return hashkey("get_summary")
+    def _make_key(_, *args):
+        return hashkey(args)
 
     def list_all(self, offset: int = 0, limit: int = 100):
         query = select(Gasto).offset(offset).limit(limit)
