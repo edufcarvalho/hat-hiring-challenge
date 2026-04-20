@@ -17,23 +17,26 @@ router = APIRouter()
 @router.get("")
 def listar_gastos(
     response: Response,
-    offset: int = 0,
-    limit: int = 100,
+    page: int = 0,
+    page_size: int = 100,
     session=Depends(get_session),
 ):
     repository = GastoRepository(session)
-    result = repository.list_all(offset, limit)
-    # logger.info(f"Cache info: {repository.list_all.cache_info()}")
-    cache_status = "HIT" if repository.list_all.cache_info().hits > 0 else "MISS"
-    response.headers["X-Cache-Status"] = cache_status
+    offset = page * page_size
+    result = repository.list_all(offset, page_size)
+
     return result
 
 
 @router.get("/resumo")
-def resumo_gastos():
-    logger.info(f"Cache info: {resumo_gastos.cache_info()}")
-    # TODO: Implemente com cache em memória (header X-Cache: HIT/MISS)
-    raise NotImplementedError
+def resumo_gastos(response: Response, session=Depends(get_session)):
+    repository = GastoRepository(session)
+    result = repository.get_summary()
+
+    is_hit = "HIT" if repository.get_summary.cache_info().hits > 0 else "MISS"
+    response.headers["X-Cache-Status"] = is_hit
+
+    return result
 
 
 @router.get("/{gasto_id}")
