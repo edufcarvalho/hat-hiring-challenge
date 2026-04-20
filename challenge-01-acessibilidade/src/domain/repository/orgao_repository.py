@@ -1,15 +1,9 @@
-from sqlmodel import Session, select
+from sqlmodel import Session
 
 from src.domain.models import Orgao
+from src.domain.repository.types import BaseRepository
 
 
-class OrgaoRepository:
+class OrgaoRepository(BaseRepository):
     def __init__(self, session: Session):
-        self.session = session
-
-    def list_all(self, page: int = 0, page_size: int = 100):
-        offset = page * page_size
-
-        query = select(Orgao).offset(offset).limit(page_size)
-        result = self.session.exec(query).all()
-        return result
+        super().__init__(session, Orgao)

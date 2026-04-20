@@ -6,18 +6,14 @@ from uuid import UUID
 from sqlmodel import Session, func, select
 
 from src.domain.models import Categoria, Gasto, GastoResumo, RespostaResumo
+from src.domain.repository.types import BaseRepository
 
 logger = logging.getLogger("uvicorn.error")
 
 
-class GastoRepository:
+class GastoRepository(BaseRepository):
     def __init__(self, session: Session):
-        self.session = session
-
-    def list_all(self, offset: int = 0, limit: int = 100):
-        query = select(Gasto).offset(offset).limit(limit)
-        result = self.session.exec(query).all()
-        return result
+        super().__init__(session, Gasto)
 
     def get_summary(
         self,
