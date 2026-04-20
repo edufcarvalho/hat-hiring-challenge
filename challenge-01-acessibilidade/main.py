@@ -12,8 +12,9 @@ from src.infra.database import create_db_and_tables, get_session
 from src.infra.seed import seed_database
 
 
-def lifespan(app: FastAPI):
+def lifespan(_: FastAPI):
     create_db_and_tables()
+
     with next(get_session()) as session:
         query = select(Orgao).limit(1)
         result = session.exec(query).first()

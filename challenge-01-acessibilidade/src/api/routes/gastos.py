@@ -5,6 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
 
+from src.api.utils.cache import cache
 from src.domain.repository import GastoRepository
 from src.infra.database import get_session
 
@@ -30,15 +31,10 @@ def listar_gastos(
 
 
 @router.get("/resumo")
+@cache(expire=60, cache_header="X-Cache")
 def resumo_gastos(response: Response, session=Depends(get_session)):
     repository = GastoRepository(session)
-
-    hits_before = repository.get_summary.cache_info()
     result = repository.get_summary()
-    hiits_after = repository.get_summary.cache_info()
-
-    is_hit = "HIT" if hiits_after.hits > hits_before.hits else "MISS"
-    response.headers["X-Cache"] = is_hit
 
     return result
 

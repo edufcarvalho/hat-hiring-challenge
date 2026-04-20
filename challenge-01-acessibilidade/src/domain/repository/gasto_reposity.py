@@ -1,11 +1,8 @@
 import logging
-import time
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
 
-from cachetools import TTLCache, cached
-from cachetools.keys import hashkey
 from sqlmodel import Session, func, select
 
 from src.domain.models import Categoria, Gasto, GastoResumo, RespostaResumo
@@ -14,25 +11,14 @@ logger = logging.getLogger("uvicorn.error")
 
 
 class GastoRepository:
-    _cache = TTLCache(maxsize=100, ttl=60, timer=time.time)
-
     def __init__(self, session: Session):
         self.session = session
-
-    @classmethod
-    def clear_cache(cls):
-        cls._cache.clear()
-
-    @staticmethod
-    def _make_key(_, *args):
-        return hashkey(args)
 
     def list_all(self, offset: int = 0, limit: int = 100):
         query = select(Gasto).offset(offset).limit(limit)
         result = self.session.exec(query).all()
         return result
 
-    @cached(cache=_cache, key=_make_key, info=True)
     def get_summary(
         self,
         start_date: Optional[datetime] = datetime.min,
