@@ -35,7 +35,7 @@ def resumo_gastos(response: Response, session=Depends(get_session)):
     result = repository.get_summary()
 
     is_hit = "HIT" if repository.get_summary.cache_info().hits > 0 else "MISS"
-    response.headers["X-Cache-Status"] = is_hit
+    response.headers["X-Cache"] = is_hit
 
     return result
 
