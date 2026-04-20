@@ -21,6 +21,7 @@ def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
+# Generator that yeilds
 def get_session():
     """Get database session."""
     with Session(engine) as session:
