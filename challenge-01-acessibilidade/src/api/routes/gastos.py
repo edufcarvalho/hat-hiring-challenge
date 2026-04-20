@@ -4,6 +4,7 @@ import logging
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
+from fastapi_pagination import Params as BaseParams
 
 from src.api.utils.cache import cache
 from src.domain.repository import GastoRepository
@@ -16,17 +17,28 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
+class Params(BaseParams):
+    page: int = 0
+    page_size: int = 100
+
+
 @router.get("")
 def listar_gastos(
-    page: int = 0,
-    page_size: int = 100,
+    params: Params = Depends(Params),
     session=Depends(get_session),
 ):
     repository = GastoRepository(session)
-    offset = page * page_size
-    result = repository.list_all(offset, page_size)
+    offset = params.page * params.page_size
+    limit = params.page_size
+    items = repository.list_all(offset, limit)
+    total = repository.count()
 
-    return result
+    return {
+        "items": items,
+        "total": total,
+        "page": params.page,
+        "size": params.page_size,
+    }
 
 
 @router.get("/resumo")
