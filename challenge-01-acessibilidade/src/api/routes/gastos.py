@@ -1,6 +1,7 @@
 """Rotas para gastos públicos — implemente aqui."""
 
 import logging
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
 
@@ -40,6 +41,8 @@ def resumo_gastos(response: Response, session=Depends(get_session)):
 
 
 @router.get("/{gasto_id}")
-def detalhar_gasto(gasto_id: str):
-    # TODO: Implemente
-    raise NotImplementedError
+def detalhar_gasto(gasto_id: UUID, session=Depends(get_session)):
+    repository = GastoRepository(session)
+    result = repository.get_expense(gasto_id)
+
+    return result

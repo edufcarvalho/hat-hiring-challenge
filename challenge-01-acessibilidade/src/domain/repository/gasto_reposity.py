@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 from typing import Optional
+from uuid import UUID
 
 from cachetools import TTLCache, cached
 from cachetools.keys import hashkey
@@ -61,5 +62,8 @@ class GastoRepository:
 
         return result
 
-    def get_expense(self, gasto_id: int):
-        raise NotImplementedError
+    def get_expense(self, gasto_id: UUID):
+        query = select(Gasto).where(Gasto.id == gasto_id).limit(1)
+        expense = self.session.exec(query).first()
+
+        return expense
