@@ -32,9 +32,12 @@ def listar_gastos(
 @router.get("/resumo")
 def resumo_gastos(response: Response, session=Depends(get_session)):
     repository = GastoRepository(session)
-    result = repository.get_summary()
 
-    is_hit = "HIT" if repository.get_summary.cache_info().hits > 0 else "MISS"
+    hits_before = repository.get_summary.cache_info()
+    result = repository.get_summary()
+    hiits_after = repository.get_summary.cache_info()
+
+    is_hit = "HIT" if hiits_after.hits > hits_before.hits else "MISS"
     response.headers["X-Cache"] = is_hit
 
     return result
