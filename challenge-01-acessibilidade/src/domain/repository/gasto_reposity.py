@@ -1,4 +1,5 @@
 import logging
+import time
 from datetime import datetime
 from typing import Optional
 from uuid import UUID
@@ -13,10 +14,14 @@ logger = logging.getLogger("uvicorn.error")
 
 
 class GastoRepository:
-    _cache = TTLCache(maxsize=100, ttl=60)
+    _cache = TTLCache(maxsize=100, ttl=60, timer=time.time)
 
     def __init__(self, session: Session):
         self.session = session
+
+    @classmethod
+    def clear_cache(cls):
+        cls._cache.clear()
 
     @staticmethod
     def _make_key(_, *args):
