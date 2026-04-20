@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
 
-from src.domain.repository.gasto_reposity import GastoRepository
+from src.domain.repository import GastoRepository
 from src.infra.database import get_session
 
 logging.basicConfig(level=logging.INFO)
