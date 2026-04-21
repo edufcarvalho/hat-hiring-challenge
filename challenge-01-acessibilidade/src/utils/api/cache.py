@@ -6,6 +6,17 @@ from cachetools import cached as base_cache
 
 from src.utils.api.types import Params
 
+_cache_store: dict[str, TLRUCache] = dict()
+
+
+def _get_cache(func_name, expire) -> TLRUCache:
+    global _cache_store
+
+    cache = _cache_store.setdefault(
+        func_name, TLRUCache(maxsize=100, ttu=lambda k, v, t: t + expire)
+    )
+    return cache
+
 
 def _key_generator(*args, **kwargs) -> tuple:
     params = kwargs.get("params")
@@ -41,7 +52,7 @@ def cache(
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        tlru_cache = TLRUCache(maxsize=100, ttu=lambda k, v, t: t + expire)
+        tlru_cache = _get_cache(func.__name__, expire)
 
         wrapped = base_cache(cache=tlru_cache, key=key, info=True)(func)
 
@@ -54,10 +65,9 @@ def cache(
             hits_after = wrapped.cache_info().hits
 
             if response:
-                if hits_before < hits_after:
-                    response.headers[cache_header] = "HIT"
-                else:
-                    response.headers[cache_header] = "MISS"
+                response.headers[cache_header] = (
+                    "HIT" if hits_before < hits_after else "MISS"
+                )
 
             return result
 
@@ -70,6 +80,17 @@ def cache(
     return decorator
 
 
-def clear_cache():
-    """Clear all cached data. Useful for testing."""
-    pass
+def clear_cache(func_name):
+    """Clear cached for specific function. Useful for testing."""
+    global _cache_store
+
+    if cache := _cache_store.get(func_name):
+        cache.clear()
+
+
+def clear_all_cached():
+    """Clear all cached stores. Useful for testing."""
+    global _cache_store
+
+    for cache in _cache_store.values():
+        cache.clear()
