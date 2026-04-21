@@ -1,47 +1,65 @@
-import time
 from functools import wraps
 from typing import Any, Callable, Optional, Type
 
-_cache_store: dict = {}
+from cachetools import TLRUCache
+from cachetools import cached as base_cache
+
+
+def _key_generator(*args, **kwargs) -> tuple:
+    params = kwargs.get("params")
+    if params is not None and hasattr(params, "page"):
+        return (
+            params.page,
+            params.page_size,
+            params.orgao,
+            params.ano,
+            params.mes,
+            params.categoria,
+            params.valor_min,
+            params.valor_max,
+        )
+    return args
 
 
 def cache(
-    expire: Optional[int] = None,
+    expire: Optional[int] = 60,
     coder: Optional[Type] = None,
-    key_builder: Optional[Callable] = None,
+    key: Optional[Callable] = _key_generator,
     namespace: str = "",
     injected_dependency_namespace: str = "__fastapi_cache",
     cache_header: str = "X-Cache",
 ) -> Callable:
     """
-    Simple cache decorator that adds cache status header (HIT/MISS).
-    Each decorated function gets its own cache entry.
+    Cache decorator that wraps cachetools @cached with info=True.
+    Uses TLRUCache for time-to-use expiration.
+    Uses identity key (one entry per function).
+    Adds cache status header (HIT/MISS) to responses.
     """
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        func_id = id(func)
+        tlru_cache = TLRUCache(maxsize=100, ttu=lambda k, v, t: t + expire)
+
+        wrapped = base_cache(cache=tlru_cache, key=key, info=True)(func)
 
         @wraps(func)
         def wrapper(*args, **kwargs) -> Any:
             response = kwargs.get("response")
-            cached = _cache_store.get(func_id)
 
-            is_expired = (
-                expire and time.time() > cached.get("expire_at", 0) if cached else True
-            )
-
-            if cached is None or is_expired:
-                _cache_store[func_id] = {
-                    "result": func(*args, **kwargs),
-                    "expire_at": time.time() + expire if expire else float("inf"),
-                }
-                if response:
-                    response.headers[cache_header] = "MISS"
-                return _cache_store[func_id]["result"]
+            hits_before = wrapped.cache_info().hits
+            result = wrapped(*args, **kwargs)
+            hits_after = wrapped.cache_info().hits
 
             if response:
-                response.headers[cache_header] = "HIT"
-            return cached["result"]
+                if hits_before < hits_after:
+                    response.headers[cache_header] = "HIT"
+                else:
+                    response.headers[cache_header] = "MISS"
+
+            return result
+
+        wrapper.cache_info = wrapped.cache_info
+        wrapper.cache_clear = wrapped.cache_clear
+        wrapper.cache = wrapped.cache
 
         return wrapper
 
@@ -50,4 +68,4 @@ def cache(
 
 def clear_cache():
     """Clear all cached data. Useful for testing."""
-    _cache_store.clear()
+    pass

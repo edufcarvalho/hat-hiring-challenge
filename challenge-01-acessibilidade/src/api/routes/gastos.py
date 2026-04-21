@@ -35,7 +35,7 @@ def listar_gastos(
 
 
 @router.get("/resumo")
-@cache(expire=60, cache_header="X-Cache")
+@cache(expire=60)
 def resumo_gastos(
     response: Response, params: Params = Depends(Params), session=Depends(get_session)
 ):
