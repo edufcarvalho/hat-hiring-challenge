@@ -1,5 +1,4 @@
 import logging
-from uuid import UUID
 
 from sqlmodel import Session, func, select
 
@@ -46,9 +45,3 @@ class GastoRepository(BaseRepository):
         )
 
         return result
-
-    def get_expense(self, gasto_id: UUID):
-        query = select(Gasto).where(Gasto.id == gasto_id).limit(1)
-        expense = self.session.exec(query).first()
-
-        return expense

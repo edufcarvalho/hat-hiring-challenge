@@ -45,6 +45,6 @@ def resumo_gastos(
 @router.get("/{gasto_id}")
 def detalhar_gasto(gasto_id: UUID, session=Depends(get_session)):
     repository = GastoRepository(session)
-    result = repository.get_expense(gasto_id)
+    result = repository.list_by_id(gasto_id)
 
     return result

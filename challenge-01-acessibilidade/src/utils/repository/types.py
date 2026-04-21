@@ -23,6 +23,12 @@ class BaseRepository:
         query = select(self.model)
         return self._apply_filters_and_paginate(query, params)
 
+    def list_by_id(self, id):
+        query = select(self.model).where(self.model.id == id).limit(1)
+        object = self.session.exec(query).first()
+
+        return object
+
     def count(self, params: Params = None) -> int:
         query = select(func.count(self.model.id))
 
