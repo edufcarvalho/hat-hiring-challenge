@@ -14,6 +14,7 @@ class PaginatedResponse(BaseModel):
     size: int
 
 
+# from pdb import breakpoint
 class BaseRepository:
     def __init__(self, session: Session, model: SQLModel = SQLModel):
         self.session = session
@@ -21,7 +22,7 @@ class BaseRepository:
 
     def list_all(self, params: Params):
         query = select(self.model)
-
+        # breakpoint()
         return self._apply_filters_and_paginate(query, params)
 
     def count(self) -> int:
@@ -32,7 +33,7 @@ class BaseRepository:
     def _paginate(self, query, params: Params):
         offset = params.page * params.page_size
 
-        query.offset(offset).limit(10)
+        query = query.offset(offset).limit(10)
         result = self.session.exec(query).all()
 
         return PaginatedResponse(
@@ -44,22 +45,22 @@ class BaseRepository:
 
     def _apply_filters(self, query, params: Params):
         if params.orgao:
-            query.where(Orgao.nome == params.orgao)
+            query = query.where(Orgao.nome == params.orgao)
 
         if params.ano:
-            query.where(extract("year", Gasto.data_lancamento) == params.ano)
+            query = query.where(extract("year", Gasto.data_lancamento) == params.ano)
 
         if params.mes:
-            query.where(extract("month", Gasto.data_lancamento) == params.mes)
+            query = query.where(extract("month", Gasto.data_lancamento) == params.mes)
 
         if params.categoria:
-            query.where(Categoria.nome == params.categoria)
+            query = query.where(Categoria.nome == params.categoria)
 
         if params.valor_min:
-            query.where(Gasto.valor >= params.valor_min)
+            query = query.where(Gasto.valor >= params.valor_min)
 
         if params.valor_max:
-            query.where(Gasto.valor <= params.valor_max)
+            query = query.where(Gasto.valor <= params.valor_max)
 
         return query
 
