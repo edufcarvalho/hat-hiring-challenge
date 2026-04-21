@@ -11,7 +11,9 @@ class BaseRepository:
 
     def list_all(self, params: Params):
         query = select(self.model)
-        result = self.session.exec(self._apply_filters(query, params)).all()
+        result = self.session.exec(
+            self._apply_filters_and_paginate(query, params)
+        ).all()
 
         return result
 
@@ -19,6 +21,13 @@ class BaseRepository:
         query = select(func.count(self.model.id))
         result = self.session.exec(query).one()
         return result
+
+    def _paginate(self, query, params: Params):
+        offset = params.page * params.page_size
+
+        query.offset(offset).limit(params.page_size)
+
+        return query
 
     def _apply_filters(self, query, params: Params):
         if params.orgao:
@@ -40,3 +49,6 @@ class BaseRepository:
             query.where(Gasto.valor <= params.valor_max)
 
         return query
+
+    def _apply_filters_and_paginate(self, query, params):
+        return self._paginate(self._apply_filters(query, params), params)
