@@ -1,3 +1,5 @@
+from datetime import date
+
 from sqlmodel import Session, SQLModel, func, select
 
 from src.domain.models import Categoria, Gasto, Orgao
@@ -25,10 +27,10 @@ class BaseRepository:
             query.where(Orgao.nome == params.orgao)
 
         if params.ano:
-            query.where(Gasto.data_lancamento.year == params.ano)
+            query.where(date(Gasto.data_lancamento).year == params.ano)
 
         if params.mes:
-            query.where(Gasto.data_lancamento.month == params.mes)
+            query.where(date(Gasto.data_lancamento).month == params.mes)
 
         if params.categoria:
             query.where(Categoria.nome == params.categoria)
