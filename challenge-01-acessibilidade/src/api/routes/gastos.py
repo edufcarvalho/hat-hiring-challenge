@@ -27,14 +27,8 @@ def listar_gastos(
 ):
     repository = GastoRepository(session)
     items = repository.list_all(params)
-    total = repository.count()
 
-    return {
-        "items": items,
-        "total": total,
-        "page": params.page,
-        "size": params.page_size,
-    }
+    return items
 
 
 @router.get("/resumo")

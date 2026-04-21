@@ -1,7 +1,17 @@
+from typing import Any
+
+from pydantic import BaseModel
 from sqlmodel import Session, SQLModel, extract, func, select
 
 from src.domain.models import Categoria, Gasto, Orgao
 from src.utils.api.types import Params
+
+
+class PaginatedResponse(BaseModel):
+    items: Any
+    total: int
+    page: int
+    size: int
 
 
 class BaseRepository:
@@ -11,11 +21,8 @@ class BaseRepository:
 
     def list_all(self, params: Params):
         query = select(self.model)
-        result = self.session.exec(
-            self._apply_filters_and_paginate(query, params)
-        ).all()
 
-        return result
+        return self._apply_filters_and_paginate(query, params)
 
     def count(self) -> int:
         query = select(func.count(self.model.id))
@@ -25,9 +32,15 @@ class BaseRepository:
     def _paginate(self, query, params: Params):
         offset = params.page * params.page_size
 
-        query.offset(offset).limit(params.page_size)
+        query.offset(offset).limit(10)
+        result = self.session.exec(query).all()
 
-        return query
+        return PaginatedResponse(
+            items=result,
+            total=self.count(),
+            page=params.page,
+            size=params.page_size,
+        )
 
     def _apply_filters(self, query, params: Params):
         if params.orgao:
