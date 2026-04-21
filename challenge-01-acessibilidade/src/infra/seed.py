@@ -113,7 +113,7 @@ def generate_dados(records_number: int = 1000) -> List[Gasto]:
 def seed_database(records_number: int = 1000):
     create_db_and_tables()
 
-    with Session(engine) as session:
+    with Session(engine()) as session:
         query = select(Orgao).limit(1)
         result = session.exec(query).first()
 
