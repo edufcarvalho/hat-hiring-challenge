@@ -1,6 +1,6 @@
 import unittest
 
-from src.utils.api.cache import cache, clear_all_cached, clear_cache
+from src.infra.cache import cache, clear_all_cached, clear_cache
 from src.utils.api.schemas import Params
 
 
