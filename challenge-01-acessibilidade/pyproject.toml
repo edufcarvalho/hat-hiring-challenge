@@ -13,7 +13,6 @@ dependencies = [
     "cachetools>=7.0.5",
     "uuid6>=2025.0.1",
     "aiomcache>=0.8.2",
-    "fastapi-pagination>=0.15.12",
 ]
 
 [project.optional-dependencies]

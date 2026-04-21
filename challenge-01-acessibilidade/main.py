@@ -4,7 +4,6 @@ Ponto de entrada da aplicação FastAPI.
 """
 
 from fastapi import FastAPI
-from fastapi_pagination import add_pagination
 
 from src.api.routes import gastos, orgaos
 from src.infra.database import create_db_and_tables
@@ -25,7 +24,6 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-add_pagination(app)
 
 app.include_router(gastos.router, prefix="/gastos", tags=["Gastos"])
 app.include_router(orgaos.router, prefix="/orgaos", tags=["Órgãos"])
