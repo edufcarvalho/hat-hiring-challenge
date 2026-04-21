@@ -4,11 +4,11 @@ from decimal import Decimal
 from uuid6 import uuid8
 
 from src.domain.models import Gasto
-from src.tests.utils.repository import BaseRepositoryTest
+from src.tests.utils.test_utils import BaseTest
 from src.utils.api.types import Params
 
 
-class TestBaseRepository(BaseRepositoryTest):
+class TestBaseRepository(BaseTest):
     def setUp(self):
         super().setUp(Gasto)
 

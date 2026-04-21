@@ -2,11 +2,11 @@ import unittest
 
 from src.domain.models import Gasto, RespostaResumo
 from src.domain.repository.gasto_repository import GastoRepository
-from src.tests.utils.repository import BaseRepositoryTest
+from src.tests.utils.test_utils import BaseTest
 from src.utils.api.types import Params
 
 
-class TestGastoRepository(BaseRepositoryTest):
+class TestGastoRepository(BaseTest):
     def setUp(self):
         super().setUp(Gasto)
         self.repository = GastoRepository(self.session)

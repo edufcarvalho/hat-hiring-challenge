@@ -2,18 +2,23 @@ import unittest
 from datetime import date
 from decimal import Decimal
 
+from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
 
 from src.domain.enums import TipoPessoa
 from src.domain.models import Categoria, Favorecido, Gasto, Orgao
+from src.infra.database import set_engine
 from src.utils.repository.types import BaseRepository
 
 
-class BaseRepositoryTest(unittest.TestCase):
-    def setUp(self, model):
+class BaseTest(unittest.TestCase):
+    def setUp(self, model=None):
         self.session, self.fixtures = self.create_test_session()
         self.engine = self.session.get_bind()
-        self.repository = BaseRepository(self.session, model)
+        set_engine(self.engine)
+
+        if model:
+            self.repository = BaseRepository(self.session, model)
 
     def tearDown(self):
         self.session.close()
@@ -21,7 +26,9 @@ class BaseRepositoryTest(unittest.TestCase):
 
     def create_test_session(self) -> tuple[Session, dict[str, list[object]]]:
         engine = create_engine(
-            "sqlite:///:memory:", connect_args={"check_same_thread": False}
+            "sqlite:///:memory:",
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
         )
         SQLModel.metadata.create_all(engine)
 
@@ -36,10 +43,7 @@ class BaseRepositoryTest(unittest.TestCase):
             Categoria(nome="Categoria B"),
         ]
         favorecidos = [
-            Favorecido(
-                nome="Favorecidoelf.repository = BaseRepository(self.session, Orgao) 1",
-                tipo=TipoPessoa.FISICA,
-            ),
+            Favorecido(nome="Favorecido 1", tipo=TipoPessoa.FISICA),
             Favorecido(nome="Favorecido 2", tipo=TipoPessoa.JURIDICA),
         ]
         gastos = [
@@ -93,6 +97,9 @@ class BaseRepositoryTest(unittest.TestCase):
             ),
         ]
 
+        session.add_all(orgaos)
+        session.add_all(categorias)
+        session.add_all(favorecidos)
         session.add_all(gastos)
         session.commit()
 
