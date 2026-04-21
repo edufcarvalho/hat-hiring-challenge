@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-TEST_ENV := DATABASE_URL=sqlite:///./data/challenge_test.db ECHO_ENABLED=false
+TEST_ENV := DATABASE_URL=sqlite:///:memory: ECHO_ENABLED=false
 
 ENV := DATABASE_URL=sqlite:///./data/challenge.db ECHO_ENABLED=true CACHE_TTU=60
 
@@ -22,10 +22,10 @@ run: install
 	$(ENV) uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 
 test: install
-	$(TEST_ENV) uv run pytest src/tests/ -v
+	$(TEST_ENV) uv run pytest $(TEST_FILE) -v
 
 test-verbose: install
-	$(TEST_ENV) uv run pytest src/tests/ -v --tb=long
+	$(TEST_ENV) uv run pytest $(TEST_FILE) -v --tb=long
 
 lint: install
 	uv run ruff check src/
