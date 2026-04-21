@@ -35,7 +35,7 @@ class BaseRepository:
     def _paginate(self, query, params: Params):
         offset = params.page * params.page_size
 
-        query = query.offset(offset).limit(10)
+        query = query.offset(offset).limit(10).order_by(self.model.id)
         result = self.session.exec(query).all()
 
         return PaginatedResponse(
