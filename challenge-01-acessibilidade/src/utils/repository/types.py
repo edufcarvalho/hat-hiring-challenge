@@ -1,5 +1,7 @@
 from sqlmodel import Session, SQLModel, func, select
 
+from src.utils.api.types import Params
+
 
 class BaseRepository:
     def __init__(self, session: Session, model: SQLModel = SQLModel):
@@ -16,5 +18,5 @@ class BaseRepository:
         result = self.session.exec(query).one()
         return result
 
-    def _apply_filters(self):
+    def _apply_filters(self, query, params: Params):
         pass

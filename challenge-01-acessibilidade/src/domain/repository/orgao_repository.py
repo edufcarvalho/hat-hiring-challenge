@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
 from src.domain.models import Orgao
-from src.domain.repository.types import BaseRepository
+from src.utils.repository.types import BaseRepository
 
 
 class OrgaoRepository(BaseRepository):

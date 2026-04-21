@@ -6,7 +6,7 @@ from uuid import UUID
 from sqlmodel import Session, func, select
 
 from src.domain.models import Categoria, Gasto, GastoResumo, RespostaResumo
-from src.domain.repository.types import BaseRepository
+from src.utils.repository.types import BaseRepository
 
 logger = logging.getLogger("uvicorn.error")
 
