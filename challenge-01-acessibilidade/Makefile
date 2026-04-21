@@ -1,7 +1,13 @@
-.PHONY: help install run test test-verbose lint clean run-migrations
+SHELL := /bin/bash
+
+TEST_ENV := DATABASE_URL=sqlite:///./data/challenge_test.db ECHO_ENABLED=false
+
+ENV := DATABASE_URL=sqlite:///./data/challenge.db ECHO_ENABLED=true CACHE_TTU=60
+
+.PHONY: help install run test test-verbose lint clean check-deps
 
 help:
-	@echo "Available commands:"
+	@echo -e "\033[1;34mAvailable commands:\033[0m"
 	@echo "  make install       - Install dependencies"
 	@echo "  make run           - Run the FastAPI server"
 	@echo "  make test          - Run tests"
@@ -13,22 +19,19 @@ install:
 	uv sync --all-extras
 
 run: install
-	DATABASE_URL=sqlite:///./data/challenge.db \
-	ECHO_ENABLED=true                          \
-	CACHE_TTU=60                               \
-	uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
-
+	$(ENV) uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 
 test: install
-	./.venv/bin/python -m pytest src/tests/ -v
+	$(TEST_ENV) uv run pytest src/tests/ -v
 
 test-verbose: install
-	./.venv/bin/python -m pytest src/tests/ -v --tb=long
+	$(TEST_ENV) uv run pytest src/tests/ -v --tb=long
 
 lint: install
-	./.venv/bin/ruff check src/
+	uv run ruff check src/
 
 clean:
-	rm -rf __pycache__ .pytest_cache
-	find . -type d -name "__pycache__" -exec rm -rf {} +
-	find . -type f -name "*.pyc" -delete
+	rm -rf __pycache__ .pytest_cache .ruff_cache .mypy_cache
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	rm -f ./data/challenge.db ./data/challenge_test.db
