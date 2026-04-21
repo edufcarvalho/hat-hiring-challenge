@@ -1,5 +1,6 @@
 from sqlmodel import Session, SQLModel, func, select
 
+from src.domain.models import Categoria, Gasto, Orgao
 from src.utils.api.types import Params
 
 
@@ -19,4 +20,22 @@ class BaseRepository:
         return result
 
     def _apply_filters(self, query, params: Params):
-        pass
+        if params.orgao:
+            query.where(Orgao.nome == params.orgao)
+
+        if params.ano:
+            query.where(Gasto.data_lancamento.year == params.ano)
+
+        if params.mes:
+            query.where(Gasto.data_lancamento.month == params.mes)
+
+        if params.categoria:
+            query.where(Categoria.nome == params.categoria)
+
+        if params.valor_min:
+            query.wher(Gasto.valor >= params.valor_min)
+
+        if params.valor_max:
+            query.where(Gasto.valor <= params.valor_max)
+
+        return query
