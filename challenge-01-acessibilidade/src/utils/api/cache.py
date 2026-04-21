@@ -1,3 +1,4 @@
+import time
 from functools import wraps
 from typing import Any, Callable, Optional, Type
 
@@ -13,7 +14,10 @@ def _get_cache(func_name, expire) -> TLRUCache:
     global _cache_store
 
     cache = _cache_store.setdefault(
-        func_name, TLRUCache(maxsize=100, ttu=lambda k, v, t: t + expire)
+        func_name,
+        TLRUCache(
+            maxsize=100, ttu=lambda k, v, t: t + expire, timer=lambda: time.time()
+        ),
     )
     return cache
 
