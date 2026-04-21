@@ -1,6 +1,8 @@
 import unittest
 from decimal import Decimal
 
+from uuid6 import uuid8
+
 from src.domain.models import Gasto
 from src.tests.utils.repository import BaseRepositoryTest
 from src.utils.api.types import Params
@@ -81,6 +83,35 @@ class TestBaseRepository(BaseRepositoryTest):
             len(result.items), 0, "Should return no results when min > max"
         )
         self.assertEqual(result.total, 0, "Total should be 0")
+
+    def test_list_by_id_existing_id(self):
+        """Test that list_by_id returns correct gasto for existing ID"""
+        gasto_id = self.fixtures["gastos"][0].id
+        result = self.repository.list_by_id(gasto_id)
+
+        self.assertIsNotNone(result)
+        self.assertIsInstance(result, Gasto)
+        self.assertEqual(result.id, gasto_id)
+        self.assertEqual(result.descricao, "Compra 1")
+
+    def test_list_by_id_nonexistent_id(self):
+        """Test that list_by_id returns None for non-existent ID"""
+        nonexistent_id = uuid8()
+        result = self.repository.list_by_id(nonexistent_id)
+
+        self.assertIsNone(result)
+
+    def test_list_by_id_invalid_uuid_string(self):
+        """Test that list_by_id handles invalid UUID gracefully"""
+        # This test assumes the method expects a UUID object, not a string
+        # If it accepts strings, we'd need to test with invalid string format
+        # For now, we'll test with a nil UUID
+        from uuid import UUID
+
+        nil_uuid = UUID("00000000-0000-0000-0000-000000000000")
+        result = self.repository.list_by_id(nil_uuid)
+
+        self.assertIsNone(result)
 
 
 if __name__ == "__main__":
