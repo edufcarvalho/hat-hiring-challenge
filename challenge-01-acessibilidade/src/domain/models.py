@@ -3,7 +3,6 @@ from decimal import Decimal
 from typing import Optional
 from uuid import UUID
 
-from pydantic import BaseModel
 from sqlmodel import Field, Relationship, SQLModel
 from uuid6 import uuid8
 
@@ -34,16 +33,6 @@ class Gasto(SQLModel, table=True):
     orgao: Optional["Orgao"] = Relationship(back_populates="gastos")
     categoria: Optional["Categoria"] = Relationship(back_populates="gastos")
     favorecido: Optional["Favorecido"] = Relationship(back_populates="gastos")
-
-
-class GastoResumo(BaseModel, from_attributes=True):
-    nome_categoria: str
-    gasto_total: Decimal
-
-
-class RespostaResumo(BaseModel):
-    gastos_por_categoria: list[GastoResumo]
-    top_gastos: list[Gasto]
 
 
 class Orgao(SQLModel, table=True):

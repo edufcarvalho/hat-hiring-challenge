@@ -29,8 +29,8 @@ O Brasil publica bilhões de registros de dados governamentais — licitações,
 - [x] Endpoint `GET /resumo` retornando agregações: total gasto por categoria e top 5 maiores despesas do período filtrado
 
 ### Não-Funcionais
-- [ ] Testes unitários com cobertura mínima de **70%** (medido via `pytest-cov`)
-- [ ] Testes devem cobrir: filtro vazio, filtro combinado, página inexistente, e valor_min > valor_max
+- [x] Testes unitários com cobertura mínima de **70%** (medido via `pytest-cov`)
+- [x] Testes devem cobrir: filtro vazio, filtro combinado, página inexistente, e valor_min > valor_max
 - [x] Documentação OpenAPI acessível em `/docs`
 - [x] Um arquivo `seed.py` que popula o banco com ao menos **500 registros** de dados fictícios, mas realistas
 - [ ] `README_CANDIDATO.md` explicando como rodar o projeto e suas decisões de design

@@ -5,7 +5,7 @@ from typing import Any, Callable, Optional, Type
 from cachetools import TLRUCache
 from cachetools import cached as base_cache
 
-from src.utils.api.types import Params
+from src.utils.api.schemas import Params
 
 _cache_store: dict[str, TLRUCache] = dict()
 

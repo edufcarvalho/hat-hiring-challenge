@@ -2,8 +2,9 @@ import logging
 
 from sqlmodel import Session, func, select
 
-from src.domain.models import Categoria, Gasto, GastoResumo, RespostaResumo
-from src.utils.api.types import Params
+from src.domain.models import Categoria, Gasto
+from src.domain.schemas import GastoResumo, RespostaResumo
+from src.utils.api.schemas import Params
 from src.utils.repository.types import BaseRepository
 
 logger = logging.getLogger("uvicorn.error")

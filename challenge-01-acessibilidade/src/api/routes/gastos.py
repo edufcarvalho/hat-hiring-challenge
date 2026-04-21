@@ -9,7 +9,7 @@ from fastapi import APIRouter, Depends, Response
 from src.domain.repository import GastoRepository
 from src.infra.database import get_session
 from src.utils.api.cache import cache
-from src.utils.api.types import Params
+from src.utils.api.schemas import Params
 
 CACHE_TTU = os.getenv("CACHE_TTU", 60)
 

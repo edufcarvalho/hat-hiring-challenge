@@ -1,7 +1,7 @@
 import unittest
 
 from src.utils.api.cache import cache, clear_all_cached, clear_cache
-from src.utils.api.types import Params
+from src.utils.api.schemas import Params
 
 
 class DummyResponse:

@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, SQLModel, extract, func, select
 
 from src.domain.models import Categoria, Orgao
-from src.utils.api.types import Params
+from src.utils.api.schemas import Params
 
 
 class PaginatedResponse(BaseModel):
