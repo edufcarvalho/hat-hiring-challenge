@@ -14,6 +14,7 @@ help:
 	@echo "  make test-verbose  - Run tests with verbose output"
 	@echo "  make lint          - Run linter"
 	@echo "  make clean         - Clean up generated files"
+	@echo "  make reinstall     - Regenerate files"
 
 install:
 	uv sync --all-extras
@@ -35,3 +36,5 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	rm -f ./data/challenge.db ./data/challenge_test.db
+
+reinstall: clean install
