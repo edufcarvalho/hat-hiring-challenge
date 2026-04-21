@@ -2,7 +2,7 @@ import random
 from datetime import date, timedelta
 from typing import List
 
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from src.domain.enums import TipoPessoa
 from src.domain.models import Categoria, Favorecido, Gasto, Orgao
@@ -112,9 +112,13 @@ def generate_dados(records_number: int = 1000) -> List[Gasto]:
 
 def seed_database(records_number: int = 1000):
     create_db_and_tables()
-    gastos = generate_dados(records_number)
 
     with Session(engine) as session:
-        session.add_all(gastos)
+        query = select(Orgao).limit(1)
+        result = session.exec(query).first()
 
-        session.commit()
+        if not result:
+            gastos = generate_dados(records_number)
+            session.add_all(gastos)
+
+            session.commit()

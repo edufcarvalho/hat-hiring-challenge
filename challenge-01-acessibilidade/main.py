@@ -5,22 +5,16 @@ Ponto de entrada da aplicação FastAPI.
 
 from fastapi import FastAPI
 from fastapi_pagination import add_pagination
-from sqlmodel import select
 
 from src.api.routes import gastos, orgaos
-from src.domain.models import Orgao
-from src.infra.database import create_db_and_tables, get_session
+from src.infra.database import create_db_and_tables
 from src.infra.seed import seed_database
 
 
 def lifespan(_: FastAPI):
     create_db_and_tables()
+    seed_database()
 
-    with next(get_session()) as session:
-        query = select(Orgao).limit(1)
-        result = session.exec(query).first()
-        if not result:
-            seed_database()
     yield
 
 
