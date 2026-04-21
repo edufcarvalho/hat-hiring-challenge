@@ -4,10 +4,13 @@ from typing import Any, Callable, Optional, Type
 from cachetools import TLRUCache
 from cachetools import cached as base_cache
 
+from src.utils.api.types import Params
+
 
 def _key_generator(*args, **kwargs) -> tuple:
     params = kwargs.get("params")
-    if params is not None and hasattr(params, "page"):
+
+    if isinstance(params, Params):
         return (
             params.page,
             params.page_size,
@@ -18,6 +21,7 @@ def _key_generator(*args, **kwargs) -> tuple:
             params.valor_min,
             params.valor_max,
         )
+
     return args
 
 
