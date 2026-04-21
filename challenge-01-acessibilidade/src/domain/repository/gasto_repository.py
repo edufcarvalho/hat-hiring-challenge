@@ -17,11 +17,16 @@ class GastoRepository(BaseRepository):
     def get_summary(
         self,
         params: Params,
-    ) -> list[GastoResumo]:
-        query = select(
-            Categoria.nome.label("nome_categoria"),
-            func.sum(Gasto.valor).label("gasto_total"),
-        ).group_by(Categoria.id, Categoria.nome)
+    ) -> RespostaResumo:
+        query = (
+            select(
+                Categoria.nome.label("nome_categoria"),
+                func.sum(Gasto.valor).label("gasto_total"),
+            )
+            .select_from(Gasto)
+            .join(Categoria)
+            .group_by(Categoria.id, Categoria.nome)
+        )
 
         result = self.session.exec(self._apply_filters(query, params)).all()
 
@@ -29,7 +34,10 @@ class GastoRepository(BaseRepository):
             GastoResumo(nome_categoria=row[0], gasto_total=row[1]) for row in result
         ]
 
-        query = select(Gasto).order_by(Gasto.valor.desc()).limit(5)
+        # Get top 5 expenses with filters applied
+        query = select(Gasto)
+        query = self._apply_filters(select(Gasto), params)
+        query = query.order_by(Gasto.valor.desc()).limit(5)
 
         top_expenses = self.session.exec(query).all()
         result = RespostaResumo(
