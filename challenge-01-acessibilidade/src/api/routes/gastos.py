@@ -11,7 +11,7 @@ from src.infra.database import get_session
 from src.utils.api.cache import cache
 from src.utils.api.types import Params
 
-CACHE_TTU = int(os.getenv("CACHE_TTU"))
+CACHE_TTU = os.getenv("CACHE_TTU", 60)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

@@ -13,7 +13,7 @@ from src.domain.enums import TipoPessoa
 class Gasto(SQLModel, table=True):
     __tablename__ = "gastos"
 
-    id: UUID = Field(default_factory=uuid8, primary_key=True)
+    id: UUID = Field(default_factory=uuid8, primary_key=True, index=True)
     orgao_id: UUID = Field(
         default=None,
         foreign_key="orgaos.id",
@@ -49,7 +49,7 @@ class RespostaResumo(BaseModel):
 class Orgao(SQLModel, table=True):
     __tablename__ = "orgaos"
 
-    id: UUID = Field(default_factory=uuid8, primary_key=True)
+    id: UUID = Field(default_factory=uuid8, primary_key=True, index=True)
     nome: str = Field(
         unique=True, index=True, description="Nome do ministério ou órgão"
     )
@@ -63,7 +63,7 @@ class Orgao(SQLModel, table=True):
 class Categoria(SQLModel, table=True):
     __tablename__ = "categorias"
 
-    id: UUID = Field(default_factory=uuid8, primary_key=True)
+    id: UUID = Field(default_factory=uuid8, primary_key=True, index=True)
     nome: str = Field(unique=True, index=True, description="Nome da categoria de gasto")
 
     gastos: list[Gasto] = Relationship(back_populates="categoria")
@@ -72,7 +72,7 @@ class Categoria(SQLModel, table=True):
 class Favorecido(SQLModel, table=True):
     __tablename__ = "favorecidos"
 
-    id: UUID = Field(default_factory=uuid8, primary_key=True)
+    id: UUID = Field(default_factory=uuid8, primary_key=True, index=True)
     nome: str = Field(index=True, description="Nome do favorecido do gasto")
     tipo: TipoPessoa = Field(
         default=None,
