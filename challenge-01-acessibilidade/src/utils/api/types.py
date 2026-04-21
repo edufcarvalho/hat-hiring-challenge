@@ -1,10 +1,10 @@
 from decimal import Decimal
 from typing import Optional
 
-from fastapi_pagination import Params as BaseParams
+from pydantic import BaseModel
 
 
-class Params(BaseParams):
+class Params(BaseModel):
     page: int = 0
     page_size: int = 100
     orgao: Optional[str] = None
