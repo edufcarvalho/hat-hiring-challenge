@@ -23,9 +23,7 @@ def listar_gastos(
     session=Depends(get_session),
 ):
     repository = GastoRepository(session)
-    offset = params.page * params.page_size
-    limit = params.page_size
-    items = repository.list_all(offset, limit)
+    items = repository.list_all(params)
     total = repository.count()
 
     return {
@@ -38,9 +36,11 @@ def listar_gastos(
 
 @router.get("/resumo")
 @cache(expire=60, cache_header="X-Cache")
-def resumo_gastos(response: Response, session=Depends(get_session)):
+def resumo_gastos(
+    response: Response, params: Params = Depends(Params), session=Depends(get_session)
+):
     repository = GastoRepository(session)
-    result = repository.get_summary()
+    result = repository.get_summary(params)
 
     return result
 

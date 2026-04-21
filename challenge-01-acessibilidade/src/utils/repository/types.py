@@ -9,8 +9,8 @@ class BaseRepository:
         self.session = session
         self.model = model
 
-    def list_all(self, offset: int = 0, limit: int = 100):
-        query = select(self.model).offset(offset).limit(limit)
+    def list_all(self, params: Params):
+        query = select(self.model)
         result = self.session.exec(query).all()
         return result
 

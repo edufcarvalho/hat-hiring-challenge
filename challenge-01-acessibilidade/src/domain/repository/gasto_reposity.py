@@ -1,11 +1,10 @@
 import logging
-from datetime import datetime
-from typing import Optional
 from uuid import UUID
 
 from sqlmodel import Session, func, select
 
 from src.domain.models import Categoria, Gasto, GastoResumo, RespostaResumo
+from src.utils.api.types import Params
 from src.utils.repository.types import BaseRepository
 
 logger = logging.getLogger("uvicorn.error")
@@ -17,8 +16,7 @@ class GastoRepository(BaseRepository):
 
     def get_summary(
         self,
-        start_date: Optional[datetime] = datetime.min,
-        end_date: Optional[datetime] = datetime.max,
+        params: Params,
     ) -> list[GastoResumo]:
         query = (
             select(
@@ -35,16 +33,12 @@ class GastoRepository(BaseRepository):
             GastoResumo(nome_categoria=row[0], gasto_total=row[1]) for row in result
         ]
 
-        query = (
-            select(Gasto)
-            .where(Gasto.data_lancamento.between(start_date, end_date))
-            .order_by(Gasto.valor.desc())
-            .limit(5)
-        )
+        query = select(Gasto).order_by(Gasto.valor.desc()).limit(5)
 
+        top_expenses = self.session.exec(query).all()
         result = RespostaResumo(
             gastos_por_categoria=expenses_per_category,
-            top_gastos=self.session.exec(query).all(),
+            top_gastos=top_expenses,
         )
 
         return result
