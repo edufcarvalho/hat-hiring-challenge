@@ -27,7 +27,7 @@ class GastoRepository(BaseRepository):
             .group_by(Categoria.id, Categoria.nome)
         )
 
-        result = self.session.exec(query).all()
+        result = self.session.exec(self._apply_filters(query, params)).all()
 
         expenses_per_category = [
             GastoResumo(nome_categoria=row[0], gasto_total=row[1]) for row in result

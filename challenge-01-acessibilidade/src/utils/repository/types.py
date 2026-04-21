@@ -11,7 +11,8 @@ class BaseRepository:
 
     def list_all(self, params: Params):
         query = select(self.model)
-        result = self.session.exec(query).all()
+        result = self.session.exec(self._apply_filters(query, params)).all()
+
         return result
 
     def count(self) -> int:
