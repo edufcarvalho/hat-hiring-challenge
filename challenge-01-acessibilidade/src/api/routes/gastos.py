@@ -1,6 +1,7 @@
 """Rotas para gastos públicos — implemente aqui."""
 
 import logging
+import os
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
@@ -9,6 +10,8 @@ from src.domain.repository import GastoRepository
 from src.infra.database import get_session
 from src.utils.api.cache import cache
 from src.utils.api.types import Params
+
+CACHE_TTU = int(os.getenv("CACHE_TTU"))
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,7 +38,7 @@ def listar_gastos(
 
 
 @router.get("/resumo")
-@cache(expire=60)
+@cache(expire=CACHE_TTU)
 def resumo_gastos(
     response: Response, params: Params = Depends(Params), session=Depends(get_session)
 ):

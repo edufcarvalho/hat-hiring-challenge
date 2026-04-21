@@ -15,6 +15,7 @@ install:
 run: install
 	DATABASE_URL=sqlite:///./data/challenge.db \
 	ECHO_ENABLED=true                          \
+	CACHE_TTU=60                               \
 	uv run uvicorn main:app --host 0.0.0.0 --port 8080 --reload
 
 
