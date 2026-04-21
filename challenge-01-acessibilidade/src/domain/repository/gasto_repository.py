@@ -18,14 +18,10 @@ class GastoRepository(BaseRepository):
         self,
         params: Params,
     ) -> list[GastoResumo]:
-        query = (
-            select(
-                Categoria.nome.label("nome_categoria"),
-                func.sum(Gasto.valor).label("gasto_total"),
-            )
-            .join(Gasto.categoria)
-            .group_by(Categoria.id, Categoria.nome)
-        )
+        query = select(
+            Categoria.nome.label("nome_categoria"),
+            func.sum(Gasto.valor).label("gasto_total"),
+        ).group_by(Categoria.id, Categoria.nome)
 
         result = self.session.exec(self._apply_filters(query, params)).all()
 
