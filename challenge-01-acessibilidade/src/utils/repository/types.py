@@ -34,7 +34,7 @@ class BaseRepository:
             query.where(Categoria.nome == params.categoria)
 
         if params.valor_min:
-            query.wher(Gasto.valor >= params.valor_min)
+            query.where(Gasto.valor >= params.valor_min)
 
         if params.valor_max:
             query.where(Gasto.valor <= params.valor_max)
