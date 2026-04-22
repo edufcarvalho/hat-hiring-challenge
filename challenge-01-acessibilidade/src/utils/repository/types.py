@@ -55,12 +55,12 @@ class BaseRepository:
         if params.orgao:
             query = query.join(self.model.orgao).where(Orgao.nome == params.orgao)
 
-        if params.ano:
+        if params.ano is not None:
             query = query.where(
                 extract("year", self.model.data_lancamento) == params.ano
             )
 
-        if params.mes:
+        if params.mes is not None:
             query = query.where(
                 extract("month", self.model.data_lancamento) == params.mes
             )
@@ -70,10 +70,10 @@ class BaseRepository:
                 Categoria.nome == params.categoria
             )
 
-        if params.valor_min:
+        if params.valor_min is not None:
             query = query.where(self.model.valor >= params.valor_min)
 
-        if params.valor_max:
+        if params.valor_max is not None:
             query = query.where(self.model.valor <= params.valor_max)
 
         return query

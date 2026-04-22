@@ -123,6 +123,33 @@ class TestBaseRepository(BaseTest):
 
         self.assertIsNone(result)
 
+    def test_mes_equal_zero(self):
+        """Test that mes filter handles negative correctly"""
+        params = Params(mes=0)
+        result = self.repository.list_all(params)
+
+        self.assertEqual(len(result.items), 0, "Should return no results for mes=0")
+        self.assertEqual(result.total, 0, "Total should be 0 for mes=0")
+
+    def test_mes_negative(self):
+        """Test that mes filter handles negative correctly"""
+        params = Params(mes=-1)
+        result = self.repository.list_all(params)
+
+        self.assertEqual(len(result.items), 0, "Should return no results for mes=-")
+        self.assertEqual(result.total, 0, "Total should be 0 for mes=-1")
+
+    def test_categoria_nome_nao_existe(self):
+        """Test that categoria filter handles non-existent category names correctly"""
+        # Test with a category name that doesn't exist
+        params = Params(categoria="Categoria Inexistente")
+        result = self.repository.list_all(params)
+
+        self.assertEqual(
+            len(result.items), 0, "Should return no results for non-existent category"
+        )
+        self.assertEqual(result.total, 0, "Total should be 0 for non-existent category")
+
 
 if __name__ == "__main__":
     unittest.main()
