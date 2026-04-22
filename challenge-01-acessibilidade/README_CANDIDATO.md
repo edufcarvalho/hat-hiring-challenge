@@ -9,25 +9,34 @@ pip
 uv
 ```
 
-## Execução
-Para executar locamente:
+## Como executar
+
+### Localmente
+Para executar localmente:
 ```sh
 make run
 ```
 
-Para executar containerizado:
+### Containerizado
+
+#### Dependências
+```
+docker
+docker-compose
+``` 
+
+#### Execução
 ```sh
 docker compose up
 ```
 
-
 ## Testes
-Para execução de testes por aquivo
+Para execução de testes por aquivo:
 ```sh
 TEST_FILE=/file/to/run make test
 ```
 
-Para executar todos os testes
+Para executar todos os testes:
 ```sh
 make run
 ```
@@ -45,13 +54,13 @@ Ao adicionar essa camada intermediária entre o `database` e a `api`, eu evito q
 Se tivessemos rotas de `post`, `put`, `patch` e `delete` eu poderia ainda criar uma camada de use-cases para guardar regras de negócio, mas como só temos listagem, não foi necessário
 
 ### Biblioteca de paginação própria
-Como a bibliteca de paginação da FastAPI (`fastapi-pagination` não se dá bem com caching, criei um sistema simples de paginação no `BaseRepository._paginate()`, mas acabou não sendo de grande ajuda porque a biblioteca de caching também não funcionou
+Como a bibliteca de paginação da FastAPI (`fastapi-pagination`) não se dá bem com caching, criei um sistema simples de paginação no `BaseRepository._paginate()`, mas acabou não sendo de grande ajuda porque a biblioteca de caching também não funcionou
 
 ### Bibliteca de caching própria (`@cachetools.cached()` wrapper)
-Estava tendo problemas com `X-Cache` não refletindo se houve ou não colisão, ao usar `fastapi-cache` então desenvolvi um wrapper direto para a biblioteca `cachetools` que soluciona o problema de maneira elegante, `cachetools.cached` age como função de ordem mais baxia em relação ao wrapper (como em todo wrapping) e eu extendo suas funcionalidades adicionando o header `X-Cache`
+Estava tendo problemas com `X-Cache` não refletindo se houve ou não colisão, ao usar `fastapi-cache` então desenvolvi um wrapper direto para a biblioteca `cachetools` que soluciona o problema de maneira elegante, `cachetools.cached` age como função de ordem mais baixa em relação ao wrapper (como em todo wrapping) e eu extendo suas funcionalidades adicionando o header `X-Cache`
 
 ### Uso de UUIDv8 como chave primária de todas as tabelas
-Com as acelerações de insersão que `UUIDv8` trouxe, adicionei `uuid6` como dependência, trazendo esses ids mais modernos para a aplicaçãos em perder tanta velocidade de escrita
+Com as acelerações de insersão que `UUIDv8` trouxe, adicionei `uuid6` como dependência, trazendo esses ids mais modernos para a aplicaçãos sem perder tanta velocidade de escrita
 
 ### Indexação de campos usados em busca
 Adicionei indexação nos campos de nome de todos os modelos já que eles seriam usados nas buscar e correlações (poderia ser `id`, mas optei por usar os nomes para ser mais mnemonico)
