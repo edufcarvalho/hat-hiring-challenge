@@ -10,7 +10,7 @@ from src.infra.cache import clear_all_cached
 from src.tests.utils.test_utils import BaseTest
 
 
-class TestGastoAPI(BaseTest):
+class TestGastosAPI(BaseTest):
     def setUp(self):
         super().setUp()
         self.client = TestClient(app)

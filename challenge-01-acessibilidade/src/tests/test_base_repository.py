@@ -28,7 +28,7 @@ class TestBaseRepository(BaseTest):
 
     def test_categoria_filter(self):
         """Test that checks if categoria filters working correctly"""
-        params = Params(categoria="Categoria A", ano=2024)
+        params = Params(categoria="Categoria A")
         result = self.repository.list_all(params)
 
         self.assertEqual(
@@ -59,6 +59,16 @@ class TestBaseRepository(BaseTest):
                 "Ministerio A",
                 "All items should belong to Ministerio A",
             )
+
+    def test_mes_filter(self):
+        """Test that checks if mes filter is working correctly"""
+        params = Params(mes="1")
+        result = self.repository.list_all(params)
+
+        self.assertEqual(
+            len(result.items), 4, "Should return 4 expenses for with month=1 (January)"
+        )
+        self.assertEqual(result.total, 4, "Total should be 4")
 
     def test_inexistant_page(self):
         """Test that checks behavior when a non-existent page is requested"""

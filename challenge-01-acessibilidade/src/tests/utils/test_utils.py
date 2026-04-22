@@ -85,7 +85,7 @@ class BaseTest(unittest.TestCase):
                 favorecido=favorecidos[0],
                 descricao="Compra 5",
                 valor=Decimal("60.00"),
-                data_lancamento=date(2024, 1, 14),
+                data_lancamento=date(2024, 3, 14),
             ),
             Gasto(
                 orgao=orgaos[1],
@@ -93,7 +93,7 @@ class BaseTest(unittest.TestCase):
                 favorecido=favorecidos[1],
                 descricao="Compra 6",
                 valor=Decimal("25.00"),
-                data_lancamento=date(2024, 1, 15),
+                data_lancamento=date(2024, 2, 15),
             ),
         ]
 
