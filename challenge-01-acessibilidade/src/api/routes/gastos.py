@@ -1,6 +1,5 @@
 """Rotas para gastos públicos — implemente aqui."""
 
-import logging
 import os
 from uuid import UUID
 
@@ -12,9 +11,6 @@ from src.infra.database import get_session
 from src.utils.api.schemas import Params
 
 CACHE_TTU = os.getenv("CACHE_TTU", 60)
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 router = APIRouter()
