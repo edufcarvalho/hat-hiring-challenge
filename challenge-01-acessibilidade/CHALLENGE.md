@@ -110,26 +110,60 @@ As perguntas abaixo serão feitas na entrevista após a entrega. Não há respos
 
 ### P1 — Complexidade Algorítmica
 > "Seu endpoint `/resumo` faz uma agregação no banco. Qual a complexidade de tempo da query que você escreveu? Se a tabela tiver 50 milhões de registros e você não puder usar cache, o que você faria diferente?"
+Como em big O sempre devemos considerar o pior caso, a complexidade de tempo é `O(n log(n))` e no caso médio `O(n)`
 
+Sem cache, eu talvez adicionasse um particionamento (não adicionei porque `SQLModel` não suporta), assim filtrando as *rows* antes delas carregarem, reduzindo o peso da busca, além disso, já adiconei, mas vvale comentar que os campos usados em buscas estão todos indexados
 **O que avaliamos:** Consciência de índices, particionamento, materialização de views.
 
 ### P2 — Trade-off de Consistência
 > "Você implementou cache de 60 segundos. Um gestor público acabou de cancelar uma despesa no sistema de origem. Um usuário que chama `/resumo` nesse intervalo verá dados desatualizados. Você aceitaria esse trade-off? Como comunicaria isso ao usuário da API?"
 
+*Não, não aceitaria.*
+
+Eu implementaria um header `Cache-Control` onde, quando eu recebesse `no-cache`, eu bateria no banco novamente independente de cache e guardaria a nova resposta
+Assim, caso o usuário precise de dados consistentes, ele pode abrir mão de performance em favor da consistência.
+
 **O que avaliamos:** Consciência de consistência eventual vs. performance; design de contrato de API.
 
 ### P3 — Escalabilidade
 > "Hoje você usa SQLite. Se amanhã precisarmos servir 10 mil requisições por segundo, quais 3 mudanças você faria na arquitetura, em ordem de prioridade?"
+Passos:
+1. Trocaria o SQLite por PostgreSQL com pooling do PgBouncer. Motivo: Postgres tem uma grande quantidade de extensões é um banco extremamente escalável e confiável;
+2. Criaria réplicas de leitura pro banco, usando asyncronous replication (performance > consistência) ou syncronous replication (consitencia > performance), dependendo do que a nível de caso de uso fizer mais sentido, eu acredito que seja melhor sincrono, com um custo de 1-10ms por write, eu consigo ter consistência para entregar sempre a resposta mais atualizada na API;
+3. Adicionaria um cache distribuído (1 servidor de Redis para n nodes da API) usando `docker` e `compose`
 
 **O que avaliamos:** Conhecimento de connection pooling, réplicas de leitura, cache distribuído (Redis).
 
 ### P4 — Extensibilidade
 > "Um novo cliente pediu para filtrar gastos por geolocalização — estado e município. Como você adicionaria esse filtro sem quebrar os contratos de API existentes?"
 
+Eu poderia criar uma nova API usando a namespace `/v2` e adicionaria o suporte, criaria a tabela `localizacoes` com os campos `id`, `estado`,`municipio`, adicionaria na tabela `gastos` a coluna opcional `localizacao_id` para fazer a correlação entre o gasto e onde ele foi feito, e objetos próprios para a `v2`, como: Params com municipio e estado opcionais e repositório que herdasse do `BaseRepository` e faria o `__apply_filter`:
+```
+class GastoRepository(BaseRepository):
+  def __init__(self, session: Session):
+    super().__init__(session, Gasto)
+
+  # outras funções do repository de gastos
+
+  def _apply_filters(self, query, params: Params):
+    query = super()._apply_filters(query, params)
+
+    if params.municipio:
+      query = # logic to join and filter municipio
+
+    if params.estado:
+      query = # logic join and filter municipio
+    return query
+```
+
+Também é possível não versionar a API e só adicionar tudo como opcional, o código seria bem semelhante
+
 **O que avaliamos:** Versionamento de API, design de parâmetros opcionais, backward compatibility.
 
 ### P5 — Testing Mindset
 > "Mostre um teste que você escreveu que NÃO testa o caminho feliz. Por que você escolheu esse cenário?"
+
+`TestBaseRepository::test_valor_min_greater_than_valor_max`, escolhei esse caminho porque é um erro comum preencher errado campos com nomes semelhantes, ou seja, trocar valor_min por valor_max, então era necessário testar para garantir que não houvesse erro
 
 **O que avaliamos:** Maturidade de testes, capacidade de antecipar falhas reais de usuário.
 
