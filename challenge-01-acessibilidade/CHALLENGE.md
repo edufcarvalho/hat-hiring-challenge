@@ -33,7 +33,7 @@ O Brasil publica bilhões de registros de dados governamentais — licitações,
 - [x] Testes devem cobrir: filtro vazio, filtro combinado, página inexistente, e valor_min > valor_max
 - [x] Documentação OpenAPI acessível em `/docs`
 - [x] Um arquivo `seed.py` que popula o banco com ao menos **500 registros** de dados fictícios, mas realistas
-- [ ] `README_CANDIDATO.md` explicando como rodar o projeto e suas decisões de design
+- [X] `README_CANDIDATO.md` explicando como rodar o projeto e suas decisões de design
 
 ### Stack
 Utilize a stack base do repositório (FastAPI + SQLModel + SQLite). Se preferir outra, justifique.
