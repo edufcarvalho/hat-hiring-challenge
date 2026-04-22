@@ -53,6 +53,37 @@ Ao adicionar essa camada intermediária entre o `database` e a `api`, eu evito q
 
 Se tivessemos rotas de `post`, `put`, `patch` e `delete` eu poderia ainda criar uma camada de use-cases para guardar regras de negócio, mas como só temos listagem, não foi necessário
 
+```mermaid
+flowchart LR
+    subgraph API
+        A["gastos.py"]
+        B["orgaos.py"]
+    end
+
+    subgraph Domain
+
+      G["BaseModel"]
+    end
+
+    subgraph Repositories
+      D["BaseRepository (abstract)"]
+      E["GastoRepository"]
+      F["OrgaoRepository"]
+    end
+    DB[("Database")]
+
+    A --> E
+    B --> F
+
+    E -.->|implements| D
+    F -.->|implements| D
+
+    E --> DB
+    F --> DB
+
+    D -.->|depends| G
+```
+_estado atual da arquitetura da API_
 ### Biblioteca de paginação própria
 Como a bibliteca de paginação da FastAPI (`fastapi-pagination`) não se dá bem com caching, criei um sistema simples de paginação no `BaseRepository._paginate()`, mas acabou não sendo de grande ajuda porque a biblioteca de caching também não funcionou com ele e tive que fazer a minha própria
 
