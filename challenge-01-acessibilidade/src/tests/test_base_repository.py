@@ -4,8 +4,8 @@ from decimal import Decimal
 from uuid6 import uuid8
 
 from src.domain.models import Gasto
+from src.domain.schemas import Params
 from src.tests.utils.test_utils import BaseTest
-from src.utils.api.schemas import Params
 
 
 class TestBaseRepository(BaseTest):

@@ -1,9 +1,8 @@
 from sqlmodel import Session, func, select
 
 from src.domain.models import Categoria, Gasto
-from src.domain.schemas import GastoResumo, RespostaResumo
+from src.domain.schemas import GastoResumo, Params, RespostaResumo
 from src.infra.repository.base_repository import BaseRepository
-from src.utils.api.schemas import Params
 
 
 class GastoRepository(BaseRepository):

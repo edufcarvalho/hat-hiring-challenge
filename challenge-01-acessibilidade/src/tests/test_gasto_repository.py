@@ -1,10 +1,9 @@
 import unittest
 
 from src.domain.models import Gasto
-from src.domain.schemas import RespostaResumo
+from src.domain.schemas import Params, RespostaResumo
 from src.infra.repository import GastoRepository
 from src.tests.utils.test_utils import BaseTest
-from src.utils.api.schemas import Params
 
 
 class TestGastoRepository(BaseTest):
