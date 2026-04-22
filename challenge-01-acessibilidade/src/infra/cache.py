@@ -10,13 +10,15 @@ from src.utils.api.schemas import Params
 _cache_store: dict[str, TLRUCache] = dict()
 
 
-def _get_cache(func_name, expire) -> TLRUCache:
+def _get_cache(func_name: str, expire: int) -> TLRUCache:
     global _cache_store
 
     cache = _cache_store.setdefault(
         func_name,
         TLRUCache(
-            maxsize=100, ttu=lambda k, v, t: t + expire, timer=lambda: time.time()
+            maxsize=100,
+            ttu=lambda k, v, t: t + float(expire),
+            timer=lambda: time.time(),
         ),
     )
     return cache
