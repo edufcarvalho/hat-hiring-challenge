@@ -31,14 +31,14 @@ docker compose up
 ```
 
 ## Testes
-Para execução de testes por aquivo:
+### Execução de testes por aquivo
 ```sh
 TEST_FILE=/file/to/run make test
 ```
 
-Para executar todos os testes:
+### Para executar todos os testes
 ```sh
-make run
+make test
 ```
 
 ## Decisões de Design
