@@ -43,7 +43,7 @@ make test
 
 ## Decisões de Design
 
-### Params(pydantic.BaseModel) para receber URLQueryParams
+### Params(`pydantic.BaseModel`) para receber `URLQueryParams`
 Optei por utilizar uma classe derivada do `pydantic.BaseModel` para guarar os URLQueryParams passados pelo usuário, isso além de faciltiar a distruição de parâmetros para classes dependentes da API (é só dar `params.key`), garante type checking em todos os campos recebidos do usuário
 
 ### Pattern Repository para conexão ao banco
@@ -54,6 +54,9 @@ Ao adicionar essa camada intermediária entre o `database` e a `api`, eu evito q
 Se tivessemos rotas de `post`, `put`, `patch` e `delete` eu poderia ainda criar uma camada de use-cases para guardar regras de negócio, mas como só temos listagem, não foi necessário
 
 ```mermaid
+---
+title: Estado atual da arquitetura da API
+---
 flowchart LR
     subgraph API
         A["gastos.py"]
@@ -82,8 +85,8 @@ flowchart LR
     F --> DB
 
     D -.->|depends| G
+    D[("It work <sup>up</sup> <sub>down</sub>")]
 ```
-_estado atual da arquitetura da API_
 ### Biblioteca de paginação própria
 Como a bibliteca de paginação da FastAPI (`fastapi-pagination`) não se dá bem com caching, criei um sistema simples de paginação no `BaseRepository._paginate()`, mas acabou não sendo de grande ajuda porque a biblioteca de caching também não funcionou com ele e tive que fazer a minha própria
 
