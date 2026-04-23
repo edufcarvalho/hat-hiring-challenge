@@ -1,17 +1,7 @@
-from typing import Any
+from sqlmodel import Session, SQLModel, func, select
 
-from pydantic import BaseModel
-from sqlmodel import Session, SQLModel, extract, func, select
-
-from src.domain.models import Categoria, Orgao
-from src.domain.schemas import Params
-
-
-class PaginatedResponse(BaseModel):
-    items: Any
-    total: int
-    page: int
-    size: int
+from src.domain.schemas import PaginatedParams as Params
+from src.domain.schemas import PaginatedResponse as Response
 
 
 class BaseRepository:
@@ -44,7 +34,7 @@ class BaseRepository:
         query = query.offset(offset).limit(params.page_size).order_by(self.model.id)
         result = self.session.exec(query).all()
 
-        return PaginatedResponse(
+        return Response(
             items=result,
             total=self.count(params),
             page=params.page,
@@ -52,30 +42,6 @@ class BaseRepository:
         )
 
     def _apply_filters(self, query, params: Params):
-        if params.orgao:
-            query = query.join(self.model.orgao).where(Orgao.nome == params.orgao)
-
-        if params.ano is not None:
-            query = query.where(
-                extract("year", self.model.data_lancamento) == params.ano
-            )
-
-        if params.mes is not None:
-            query = query.where(
-                extract("month", self.model.data_lancamento) == params.mes
-            )
-
-        if params.categoria:
-            query = query.join(self.model.categoria).where(
-                Categoria.nome == params.categoria
-            )
-
-        if params.valor_min is not None:
-            query = query.where(self.model.valor >= params.valor_min)
-
-        if params.valor_max is not None:
-            query = query.where(self.model.valor <= params.valor_max)
-
         return query
 
     def _apply_filters_and_paginate(self, query, params):

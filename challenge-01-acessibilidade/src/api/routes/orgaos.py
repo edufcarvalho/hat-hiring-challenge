@@ -3,7 +3,7 @@
 from fastapi import APIRouter, Depends
 from sqlmodel import Session
 
-from src.domain.schemas import Params
+from src.domain.schemas import OrgaoParams as Params
 from src.infra.database import get_session
 from src.infra.repository import OrgaoRepository
 

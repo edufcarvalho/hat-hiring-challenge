@@ -5,7 +5,7 @@ from typing import Any, Callable, Optional, Type
 from cachetools import TLRUCache
 from cachetools import cached as base_cache
 
-from src.domain.schemas import Params
+from src.domain.schemas import PaginatedParams as Params
 
 _cache_store: dict[str, TLRUCache] = dict()
 
@@ -29,14 +29,14 @@ def _key_generator(*args, **kwargs) -> tuple:
 
     if isinstance(params, Params):
         return (
-            params.page,
-            params.page_size,
-            params.orgao,
-            params.ano,
-            params.mes,
-            params.categoria,
-            params.valor_min,
-            params.valor_max,
+            getattr(params, "page", None),
+            getattr(params, "page_size", None),
+            getattr(params, "orgao", None),
+            getattr(params, "ano", None),
+            getattr(params, "mes", None),
+            getattr(params, "categoria", None),
+            getattr(params, "valor_min", None),
+            getattr(params, "valor_max", None),
         )
 
     return args

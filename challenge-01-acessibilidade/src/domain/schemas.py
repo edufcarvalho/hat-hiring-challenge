@@ -1,5 +1,5 @@
 from decimal import Decimal
-from typing import Optional
+from typing import Any, Optional
 
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
@@ -12,15 +12,28 @@ class GastoResumo(BaseModel, from_attributes=True):
     gasto_total: Decimal
 
 
+class PaginatedResponse(BaseModel):
+    items: list[Any]
+    total: int
+    page: int
+    size: int
+
+
 class RespostaResumo(BaseModel):
     gastos_por_categoria: list[GastoResumo]
     top_gastos: list[Gasto]
 
 
-class Params(BaseModel):
+class PaginatedParams(BaseModel):
     page: int = 0
     page_size: int = 100
+
+
+class OrgaoParams(PaginatedParams):
     orgao: Optional[str] = None
+
+
+class GastoParams(OrgaoParams):
     ano: Optional[int] = None
     mes: Optional[int] = None
     categoria: Optional[str] = None

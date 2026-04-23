@@ -5,7 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Response
 
-from src.domain.schemas import Params
+from src.domain.schemas import GastoParams as Params
 from src.infra.cache import cache
 from src.infra.database import get_session
 from src.infra.repository import GastoRepository
