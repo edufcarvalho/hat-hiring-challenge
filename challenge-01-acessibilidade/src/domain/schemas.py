@@ -29,7 +29,7 @@ class Params(BaseModel):
     @model_validator(mode="after")
     def min_should_be_le_than_max(self):
         if self.valor_min is not None and self.valor_max is not None:
-            if self.valor_min >= self.valor_max:
+            if self.valor_min > self.valor_max:
                 raise ValueError("valor_min cannot be greater than valor_max")
 
         return self
