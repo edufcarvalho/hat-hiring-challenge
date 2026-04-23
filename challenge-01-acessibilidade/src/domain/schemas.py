@@ -1,10 +1,12 @@
 from decimal import Decimal
-from typing import Any, Optional
+from typing import TypeVar, Optional
 
 from fastapi import HTTPException
 from pydantic import BaseModel, model_validator
 
 from src.domain.models import Gasto
+
+Model = TypeVar("Model", bound="BaseModel")
 
 
 class GastoResumo(BaseModel, from_attributes=True):
@@ -13,7 +15,7 @@ class GastoResumo(BaseModel, from_attributes=True):
 
 
 class PaginatedResponse(BaseModel):
-    items: list[Any]
+    items: list[Model]
     total: int
     page: int
     size: int
