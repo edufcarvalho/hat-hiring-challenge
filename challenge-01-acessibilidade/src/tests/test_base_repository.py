@@ -4,7 +4,7 @@ from uuid6 import uuid8
 
 from src.domain.models import Gasto
 from src.domain.schemas import GastoParams as Params
-from src.tests.utils.test_utils import BaseTest
+from src.tests.utils import BaseTest
 
 
 class TestBaseRepository(BaseTest):

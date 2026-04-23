@@ -2,7 +2,7 @@ from fastapi.testclient import TestClient
 
 from main import app
 from src.infra.cache import clear_all_cached
-from src.tests.utils.test_utils import BaseTest
+from src.tests.utils import BaseTest
 
 
 class TestOrgaosAPI(BaseTest):
