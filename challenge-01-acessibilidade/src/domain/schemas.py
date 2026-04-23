@@ -1,11 +1,12 @@
 from decimal import Decimal
 from typing import TypeVar, Optional
 
-from pydantic import BaseModel, model_validator
+from pydantic import model_validator, Field, BaseModel
+from sqlmodel import SQLModel
 
 from src.domain.models import Gasto
 
-Model = TypeVar("Model", bound="BaseModel")
+Model = TypeVar("Model", bound="SQLModel")
 
 
 class GastoResumo(BaseModel, from_attributes=True):
@@ -26,8 +27,8 @@ class RespostaResumo(BaseModel):
 
 
 class PaginatedParams(BaseModel):
-    page: int = 0
-    page_size: int = 100
+    page: int = Field(default=0, ge=0)
+    page_size: int = Field(default=100, ge=0)
 
 
 class OrgaoParams(PaginatedParams):
@@ -38,8 +39,8 @@ class GastoParams(OrgaoParams):
     ano: Optional[int] = None
     mes: Optional[int] = None
     categoria: Optional[str] = None
-    valor_min: Optional[Decimal] = None
-    valor_max: Optional[Decimal] = None
+    valor_min: Optional[Decimal] = Field(default=None, ge=0)
+    valor_max: Optional[Decimal] = Field(default=None, ge=0)
 
     @model_validator(mode="after")
     def min_should_be_le_than_max(self):
