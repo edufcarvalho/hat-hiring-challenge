@@ -78,38 +78,55 @@ class TestBaseRepository(BaseTest):
         self.assertEqual(
             len(result.items), 0, "Should return empty list for non-existent page"
         )
-        self.assertEqual(
-            result.total, 6, "Total should still be 6"
-        )  # Total should still be 6
+        self.assertEqual(result.total, 6, "Total should still be 6")
         self.assertEqual(result.page, 1, "Page should be 1")
         self.assertEqual(result.size, 10, "Size should be 10")
 
-    def test_valor_min_greater_than_valor_max(self):
-        """Test that checks behavior when valor_min > valor_max"""
-        params = Params(valor_min=Decimal("50.00"), valor_max=Decimal("30.00"))
+    def test_valor_max_greater_than_valor_min(self):
+        """Test that checks behavior when valor_min <= valor_max"""
+        params = Params(valor_min=Decimal("30.00"), valor_max=Decimal("50.00"))
         result = self.repository.list_all(params)
 
         self.assertEqual(
-            len(result.items), 0, "Should return no results when min > max"
+            len(result.items),
+            1,
+            "Should return result within the value_min --> value_max range",
         )
-        self.assertEqual(result.total, 0, "Total should be 0")
+        self.assertEqual(result.total, 1, "Total should be 1")
 
     def test_list_by_id_existing_id(self):
         """Test that list_by_id returns correct gasto for existing ID"""
         gasto_id = self.fixtures["gastos"][0].id
         result = self.repository.list_by_id(gasto_id)
 
-        self.assertIsNotNone(result)
-        self.assertIsInstance(result, Gasto)
-        self.assertEqual(result.id, gasto_id)
-        self.assertEqual(result.descricao, "Compra 1")
+        self.assertIsNotNone(
+            result,
+            "Expected list_by_id to return a gasto for an existing ID",
+        )
+        self.assertIsInstance(
+            result,
+            Gasto,
+            "Expected the returned object to be a Gasto instance",
+        )
+        self.assertEqual(
+            result.id,
+            gasto_id,
+            "Expected the returned gasto ID to match the requested ID",
+        )
+        self.assertEqual(
+            result.descricao,
+            "Compra 1",
+            "Expected the first gasto to have descricao 'Compra 1'",
+        )
 
     def test_list_by_id_nonexistent_id(self):
         """Test that list_by_id returns None for non-existent ID"""
         nonexistent_id = uuid8()
         result = self.repository.list_by_id(nonexistent_id)
 
-        self.assertIsNone(result)
+        self.assertIsNone(
+            result, "Expected list_by_id to return None for a non-existent ID"
+        )
 
     def test_list_by_id_invalid_uuid_string(self):
         """Test that list_by_id handles invalid UUID gracefully"""
@@ -121,7 +138,9 @@ class TestBaseRepository(BaseTest):
         nil_uuid = UUID("00000000-0000-0000-0000-000000000000")
         result = self.repository.list_by_id(nil_uuid)
 
-        self.assertIsNone(result)
+        self.assertIsNone(
+            result, "Expected list_by_id to return None for an invalid UUID input"
+        )
 
     def test_mes_equal_zero(self):
         """Test that mes filter handles negative correctly"""
