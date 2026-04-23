@@ -3,7 +3,8 @@ HAT Thinking — Challenge 01: Painel de Transparência Pública
 Ponto de entrada da aplicação FastAPI.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse
 
 from src.api.routes import gastos, orgaos
 from src.infra.database import create_db_and_tables
@@ -23,6 +24,13 @@ app = FastAPI(
     version="0.1.0",
     lifespan=lifespan,
 )
+
+@app.exception_handler(ValueError)
+async def validation_error_handler(request: Request, e: ValueError):
+    return JSONResponse(
+        status_code=400,
+        content={"message": f"Oops! {str(e)}"},
+    )
 
 
 app.include_router(gastos.router, prefix="/gastos", tags=["Gastos"])
