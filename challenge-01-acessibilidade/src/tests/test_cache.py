@@ -1,6 +1,6 @@
 import unittest
 
-from src.domain.schemas import Params
+from src.domain.schemas import GastoParams as Params
 from src.infra.cache import cache, clear_all_cached, clear_cache
 
 
