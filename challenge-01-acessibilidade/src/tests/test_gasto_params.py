@@ -1,16 +1,18 @@
 from decimal import Decimal
 from unittest import TestCase
 
-from src.domain.schemas import Params
+from fastapi import HTTPException
+
+from src.domain.schemas import GastoParams as Params
 
 
-class TestParams(TestCase):
+class TestGastoParams(TestCase):
     def test_valor_min_greater_than_valor_max(self):
-        # should raise ValueError everytime receives valor_min > valor_max
-        with self.assertRaises(ValueError):
+        # should raise HTTPException everytime receives valor_min > valor_max
+        with self.assertRaises(HTTPException):
             Params(valor_min=Decimal(20.0), valor_max=Decimal(10.0))
 
-    def test_valor_max_greater_than_valor_min(self):
+    def test_valor_min_lesser_than_valor_min(self):
         valor_min = Decimal(10.0)
         valor_max = Decimal(20.0)
         params = Params(valor_min=valor_min, valor_max=valor_max)
