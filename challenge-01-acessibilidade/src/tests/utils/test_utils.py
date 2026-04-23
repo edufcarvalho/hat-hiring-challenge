@@ -1,6 +1,6 @@
-import unittest
 from datetime import date
 from decimal import Decimal
+from unittest import TestCase
 
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
@@ -11,7 +11,7 @@ from src.infra.database import set_engine
 from src.infra.repository.base_repository import BaseRepository
 
 
-class BaseTest(unittest.TestCase):
+class BaseTest(TestCase):
     def setUp(self, model=None):
         self.session, self.fixtures = self.create_test_session()
         self.engine = self.session.get_bind()
