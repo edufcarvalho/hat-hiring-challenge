@@ -8,7 +8,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from src.domain.enums import TipoPessoa
 from src.domain.models import Categoria, Favorecido, Gasto, Orgao
 from src.infra.database import set_engine
-from src.infra.repository import BaseRepository
+from src.infra.repository.base_repository import BaseRepository
 
 
 class BaseTest(unittest.TestCase):
