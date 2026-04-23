@@ -53,40 +53,6 @@ Ao adicionar essa camada intermediária entre o `database` e a `api`, eu evito q
 
 Se tivessemos rotas de `post`, `put`, `patch` e `delete` eu poderia ainda criar uma camada de use-cases para guardar regras de negócio, mas como só temos listagem, não foi necessário
 
-```mermaid
----
-title: Estado atual da arquitetura da API
----
-flowchart LR
-    subgraph API
-        A["gastos.py"]
-        B["orgaos.py"]
-    end
-
-    subgraph Domain
-
-      G["BaseModel"]
-    end
-
-    subgraph Repositories
-      D["BaseRepository (abstract)"]
-      E["GastoRepository"]
-      F["OrgaoRepository"]
-    end
-    DB[("Database")]
-
-    A --> E
-    B --> F
-
-    E -.->|implements| D
-    F -.->|implements| D
-
-    E --> DB
-    F --> DB
-
-    D -.->|depends| G
-    D[("It work <sup>up</sup> <sub>down</sub>")]
-```
 ### Biblioteca de paginação própria
 Como a bibliteca de paginação da FastAPI (`fastapi-pagination`) não se dá bem com caching, criei um sistema simples de paginação no `BaseRepository._paginate()`, mas acabou não sendo de grande ajuda porque a biblioteca de caching também não funcionou com ele e tive que fazer a minha própria
 
@@ -98,3 +64,166 @@ Com as acelerações de insersão que `UUIDv8` trouxe, adicionei `uuid6` como de
 
 ### Indexação de campos usados em busca
 Adicionei indexação nos campos de nome de todos os modelos já que eles seriam usados nas buscas por correlações (poderia ser no `id`, mas optei por usar os nomes para ser mais mnemonico na hora de consumir a API).
+
+### Diagramas
+
+#### Diagrama de Classes
+```mermaid
+---
+title: Diagrama de Classes da Arquitetura
+---
+classDiagram
+
+    class Gasto {
+      +UUID id
+      +UUID orgao_id
+      +UUID categoria_id
+      +str descricao
+      +Decimal valor
+      +date data_lancamento
+      +UUID favorecido_id
+    }
+
+    class Orgao {
+        +UUID id
+        +str nome
+        +str sigla
+    }
+
+    class Categoria {
+        +UUID id
+        +str nome
+    }
+
+    class Favorecido {
+        +UUID id
+        +str nome
+    }
+
+    Gasto --> Orgao : belongs_to
+    Gasto --> Categoria : belongs_to
+    Gasto --> Favorecido : belongs_to
+
+    Orgao --> Gasto : has_many
+    Categoria --> Gasto : has_many
+    Favorecido --> Gasto : has_many
+
+    class GastoResumo {
+      +nome_categoria: str
+      +gasto_total: Decimal
+    }
+
+    class PaginatedResponse~T~ {
+      +items: list[T]
+      +total: int
+      +page: int
+      +size: int
+    }
+
+    class RespostaResumo {
+      +gastos_por_categoria: list[GastoResumo]
+      +top_gastos: list[Gasto]
+    }
+
+    class PaginatedParams {
+      +page: int
+      +page_size: int
+    }
+
+    class OrgaoParams {
+      +orgao: Optional[str]
+    }
+
+    class GastoParams {
+      +ano: Optional[int]
+      +mes: Optional[int]
+      +categoria: Optional[str]
+      +valor_min: Decimal
+      +valor_max: Decimal
+      +validate_min_max()
+    }
+
+    PaginatedParams <|-- OrgaoParams
+    OrgaoParams <|-- GastoParams
+
+    class BaseRepository {
+        <<abstract>>
+        -model
+        +list_all(params)
+        +list_by_id(id)
+        +count(params)
+        -_paginate(query, params)
+        -_apply_filters(query, params)
+        -_apply_filters_and_paginate(query, params)
+    }
+
+    class GastoRepository {
+        +get_summary(params): RespostaResumo
+        -_apply_filters(query, params)
+    }
+
+    class OrgaoRepository {
+        -_apply_filters(query, params)
+    }
+
+    BaseRepository <|-- GastoRepository
+    BaseRepository <|-- OrgaoRepository
+
+    BaseRepository --> PaginatedParams
+    BaseRepository --> PaginatedResponse
+
+    GastoRepository --> Gasto
+    GastoRepository --> Categoria
+    GastoRepository --> Orgao
+    GastoRepository --> GastoResumo
+    GastoRepository --> RespostaResumo
+    GastoRepository --> GastoParams
+
+    OrgaoRepository --> Orgao
+    OrgaoRepository --> OrgaoParams
+```
+
+#### Flowchart da API
+```mermaid
+---
+title: Estado atual da arquitetura da API e suas interaçõews com o restante do sistema
+---
+flowchart LR
+    subgraph API
+        M["main.py"]
+        A["gastos.py"]
+        B["orgaos.py"]
+    end
+
+    subgraph Domain
+      G["models.py"]
+      Z["schemas.py"]
+    end
+
+    subgraph Infra
+      subgraph Repositories
+        D["BaseRepository (abstract)"]
+        E["GastoRepository"]
+        F["OrgaoRepository"]
+      end
+
+      J["Session (database.py)"]
+    end
+    DB[("SQLite Database")]
+
+    A --> E
+    B --> F
+
+    E -.->|implements| D
+    F -.->|implements| D
+
+    E --> J
+    F --> J
+
+    M -->A
+    M -->B
+    J -->DB
+    D -.->|depends| G
+    D -.->|depends| Z
+    G -.->|depends| Z
+```
