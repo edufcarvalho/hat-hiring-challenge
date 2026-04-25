@@ -86,7 +86,7 @@ def cache(
     return decorator
 
 
-def clear_cache(func_name):
+def clear_cache(func_name: str) -> None:
     """Clear cached for specific function. Useful for testing."""
     global _cache_store
 
@@ -94,7 +94,7 @@ def clear_cache(func_name):
         cache.clear()
 
 
-def clear_all_cached():
+def clear_all_cached() -> None:
     """Clear all cached stores. Useful for testing."""
     global _cache_store
 

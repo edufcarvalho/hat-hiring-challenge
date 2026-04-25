@@ -1,11 +1,10 @@
 """Rotas para órgãos — implemente aqui."""
 
 from fastapi import APIRouter, Depends
-from sqlmodel import Session
 
+from src.api.tools import get_orgao_service
+from src.application import OrgaoService
 from src.domain.schemas import OrgaoParams as Params
-from src.infra.database import get_session
-from src.infra.repository import OrgaoRepository
 
 router = APIRouter()
 
@@ -13,8 +12,6 @@ router = APIRouter()
 @router.get("")
 def listar_orgaos(
     params: Params = Depends(Params),
-    session: Session = Depends(get_session),
+    service: OrgaoService = Depends(get_orgao_service),
 ):
-    repository = OrgaoRepository(session)
-
-    return repository.list_all(params)
+    return service.list(params)

@@ -1,6 +1,5 @@
 import random
 from datetime import date, timedelta
-from typing import List
 
 from sqlmodel import Session, select
 
@@ -79,8 +78,8 @@ descricoes = {
 }
 
 
-def generate_dados(records_number: int = 1000) -> List[Gasto]:
-    gastos = []
+def generate_dados(records_number: int = 1000) -> list[Gasto]:
+    gastos: list[Gasto] = []
     start_date = date(2025, 1, 1)
     end_date = date(2026, 4, 16)
 

@@ -1,15 +1,16 @@
 from decimal import Decimal
-from typing import TypeVar, Optional
+from typing import Optional, TypeVar
 
-from pydantic import model_validator, Field, BaseModel
+from pydantic import BaseModel, Field, model_validator
 from sqlmodel import SQLModel
 
 from src.domain.models import Gasto
+from src.domain.services import validate_gasto_interval
 
 Model = TypeVar("Model", bound="SQLModel")
 
 
-class GastoResumo(BaseModel, from_attributes=True):
+class GastoResumo(BaseModel):
     nome_categoria: str
     gasto_total: Decimal
 
@@ -44,8 +45,5 @@ class GastoParams(OrgaoParams):
 
     @model_validator(mode="after")
     def min_should_be_le_than_max(self):
-        if self.valor_min is not None and self.valor_max is not None:
-            if self.valor_min > self.valor_max:
-                raise ValueError("Valor_min nunca deve ser maior que valor_max")
-
+        validate_gasto_interval(self.valor_min, self.valor_max)
         return self

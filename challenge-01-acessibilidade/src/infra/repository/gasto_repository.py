@@ -31,7 +31,6 @@ class GastoRepository(BaseRepository):
         ]
 
         # Get top 5 expenses with filters applied
-        query = select(Gasto)
         query = self._apply_filters(select(Gasto), params)
         query = query.order_by(Gasto.valor.desc()).limit(5)
 
