@@ -193,9 +193,17 @@ class TestGastosAPI(BaseTest):
         )
 
     def test_valor_min_greather_than_valor_max(self):
-        """Test that call to /gastos with valor_min > value_max returns 400 Bad Request."""
+        """Test that call to /gastos with valor_min > value_max returns 422 Unprocessable Entity."""
         response = self.client.get("/gastos?valor_min=100&valor_max=50")
-        self.assertEqual(response.status_code, 400, "Expected status Bad Request")
+        self.assertEqual(
+            response.status_code, 422, "Expected status Unprocessable Entity"
+        )
+
+        data = response.json()
+        self.assertEqual(data["path"], "/gastos")
+        self.assertEqual(len(data["errors"]), 2)
+        self.assertEqual(data["errors"][0]["location"], ["query", "valor_min"])
+        self.assertEqual(data["errors"][1]["location"], ["query", "valor_max"])
 
     def test_resumo_cache_header_hit_on_second_call_and_miss_after_sixty_seconds(self):
         """Test cache HIT then expiration behavior."""

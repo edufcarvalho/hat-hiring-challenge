@@ -1,19 +1,24 @@
 from src.domain.models import Orgao
-from src.domain.schemas import OrgaoParams as Params, PaginatedResponse
-from src.tests.utils import BaseTest
+from src.domain.schemas import OrgaoParams as Params
+from src.domain.schemas import PaginatedResponse
 from src.infra.repository import OrgaoRepository
+from src.tests.utils import BaseTest
+
 
 class TestOrgaoRepository(BaseTest):
     def setUp(self):
         super().setUp(Orgao)
-        self.repository = OrgaoRepository(self.session) 
+        self.repository = OrgaoRepository(self.session)
 
     def test_list_all(self):
         """Test .list_all without passing any filtering params"""
         params = Params()
         result = self.repository.list_all(params)
 
-        self.assertTrue(all(isinstance(item, Orgao) for item in result.items), "All returns should be Orgaos")
+        self.assertTrue(
+            all(isinstance(item, Orgao) for item in result.items),
+            "All returns should be Orgaos",
+        )
         self.assertIsInstance(result, PaginatedResponse, "Response should be paginated")
 
     def test_list_all_filtering(self):
@@ -21,7 +26,9 @@ class TestOrgaoRepository(BaseTest):
         params = Params(orgao="Ministerio B")
         result = self.repository.list_all(params)
 
-        self.assertEqual(result.items[0].nome, "Ministerio B", "Should return the filtered Orgao")
+        self.assertEqual(
+            result.items[0].nome, "Ministerio B", "Should return the filtered Orgao"
+        )
         self.assertIsInstance(result.items[0], Orgao, "Should return an Orgao")
         self.assertIsInstance(result, PaginatedResponse, "Response should be paginated")
 
